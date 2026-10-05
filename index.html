@@ -2,237 +2,62 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão e Acompanhamento de Contratos - Senac MT</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <title>Gestão e Acompanhamento de Contratos</title>
+    <!-- Tus estilos y librerías actuales -->
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+<body>
+    <!-- Tu estructura HTML existente -->
 
-    <!-- Header com Logo Destacada -->
-    <header class="bg-blue-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-6">
-                <!-- Caixa branca com a logo -->
-                <div class="bg-white px-4 py-3 rounded-2xl shadow-lg flex items-center justify-center border border-gray-100">
-                    <img src="LOGO%2080-01%20(1)COPIA.png" alt="Logo Senac Fecomércio Sesc" class="h-16 sm:h-20 w-auto object-contain">
-                </div>
-                <div class="border-l border-blue-700 pl-6">
-                    <h1 class="text-2xl sm:text-3xl font-bold">Gestão e Acompanhamento de Contratos</h1>
-                    <p class="text-xs sm:text-sm text-blue-200 mt-1">Painel de Vigências e Status em Tempo Real</p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-4">
-                <div id="status-sinc" class="text-xs bg-blue-800 px-3.5 py-2 rounded-full flex items-center space-x-2 border border-blue-700 shadow-sm">
-                    <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
-                    <span id="txt-atualizacao">Sincronizado com Repositório</span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 flex-grow w-full">
-
-        <!-- KPI Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total de Contratos</p>
-                    <h3 id="kpi-total" class="text-2xl font-bold text-gray-800 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-bold text-lg">
-                    📋
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Contratos Regulares</p>
-                    <h3 id="kpi-regulares" class="text-2xl font-bold text-emerald-600 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-bold text-lg">
-                    ✅
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Em Atenção</p>
-                    <h3 id="kpi-atencao" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center font-bold text-lg">
-                    ⚠️
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Críticos / Vencidos</p>
-                    <h3 id="kpi-criticos" class="text-2xl font-bold text-red-600 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center font-bold text-lg">
-                    ❌
-                </div>
-            </div>
-        </div>
-
-        <!-- Filters & Controls -->
-        <div class="bg-white rounded-2xl shadow-sm p-5 mb-8 border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="w-full md:w-80">
-                <select id="filtro-servico" class="w-full bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-xl p-3 focus:ring-blue-500 focus:border-blue-500 font-medium">
-                    <option value="">Todos os Serviços</option>
-                    <option value="Jardinagem">Jardinagem</option>
-                    <option value="Monitoramento">Monitoramento</option>
-                    <option value="Postos de Limpeza">Postos de Limpeza</option>
-                    <option value="Dedetização">Dedetização</option>
-                </select>
-            </div>
-            <div class="w-full md:w-80">
-                <select id="filtro-status" class="w-full bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-xl p-3 focus:ring-blue-500 focus:border-blue-500 font-medium">
-                    <option value="">Todos os Status</option>
-                    <option value="REGULAR">Regular</option>
-                    <option value="ATENÇÃO">Atenção</option>
-                    <option value="CRÍTICO">Crítico / Vencido</option>
-                </select>
-            </div>
-            <div class="w-full md:w-96">
-                <input type="text" id="busca-geral" placeholder="Pesquisar unidade, contrato, origem..." class="w-full bg-gray-50 border border-gray-300 text-sm rounded-xl p-3 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-        </div>
-
-        <!-- Contracts Table -->
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    📋 Base Consolidada de Contratos
-                </h2>
-                <span id="contador-contratos" class="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">0 contrato(s)</span>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider border-b border-gray-100">
-                            <th class="py-3.5 px-6 font-semibold">Serviço</th>
-                            <th class="py-3.5 px-6 font-semibold">Unidade</th>
-                            <th class="py-3.5 px-6 font-semibold">Contrato</th>
-                            <th class="py-3.5 px-6 font-semibold">Origem</th>
-                            <th class="py-3.5 px-6 font-semibold">Vencimento</th>
-                            <th class="py-3.5 px-6 font-semibold text-center">Dias p/ Vencer</th>
-                            <th class="py-3.5 px-6 font-semibold">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-contratos" class="divide-y divide-gray-100 text-sm">
-                        <!-- Preenchido via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-12 py-4 text-center text-xs text-gray-500">
-        Senac MT — Sistema de Gestão de Contratos &copy; 2026
-    </footer>
-
-    <!-- Script de Sincronização e Renderização -->
     <script>
-        let dadosContratos = [];
+        // Función para convertir la fecha serial de Excel a formato legible DD/MM/YYYY
+        function converterDataExcel(serial) {
+            if (!serial || isNaN(serial)) return serial;
+            const utc_days = Math.floor(serial - 25569);
+            const utc_value = utc_days * 86400 * 1000;
+            const data_obj = new Date(utc_value);
+            
+            const dia = String(data_obj.getUTCDate()).padStart(2, '0');
+            const mes = String(data_obj.getUTCMonth() + 1).padStart(2, '0');
+            const ano = data_obj.getUTCFullYear();
+            
+            return `${dia}/${mes}/${ano}`;
+        }
 
-        async function carregarDadosContratos() {
+        // Función para cargar y renderizar los contratos desde tu archivo contratos.json
+        async function carregarContratos() {
             try {
-                // Lê o arquivo contratos.json do repositório (assim como o data.json da frota)
-                const resposta = await fetch('contratos.json?' + new Date().getTime());
-                if (!resposta.ok) throw new Error('Erro ao carregar contratos.json');
-                dadosContratos = await resposta.json();
-                atualizarPainel();
+                // Si el JSON está en el mismo repositorio, se carga directamente
+                const resposta = await fetch('contratos.json');
+                const dados = await resposta.json();
+
+                const tbody = document.querySelector('table tbody'); // Asegúrate de que apunta al tbody de tu tabla
+                if (!tbody) return;
+                
+                tbody.innerHTML = '';
+
+                dados.forEach(contrato => {
+                    // Se aplica la conversión en el campo de fecha (ajusta 'Vencimento' según el nombre exacto de la columna en tu Excel)
+                    const dataFormatada = converterDataExcel(contrato.Vencimento);
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${contrato.Serviço || ''}</td>
+                        <td>${contrato.Unidade || ''}</td>
+                        <td>${contrato.Contrato || ''}</td>
+                        <td>${contrato.Origem || ''}</td>
+                        <td>${dataFormatada}</td>
+                        <td>${contrato['Dias p/ Vencer'] || ''}</td>
+                        <td>${contrato.Status || ''}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             } catch (erro) {
-                console.error("Erro:", erro);
-                document.getElementById('txt-atualizacao').innerText = "Erro ao sincronizar dados";
+                console.error('Erro ao carregar os contratos:', erro);
             }
         }
 
-        function formatarDataBR(dataIso) {
-            if (!dataIso) return "--";
-            const p = dataIso.substring(0, 10).split('-');
-            return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : dataIso;
-        }
-
-        function atualizarPainel() {
-            const filtroServico = document.getElementById('filtro-servico').value;
-            const filtroStatus = document.getElementById('filtro-status').value;
-            const termoBusca = document.getElementById('busca-geral').value.toLowerCase();
-
-            // Atualiza KPIs
-            let total = dadosContratos.length;
-            let regulares = dadosContratos.filter(i => (i.Status || "").toUpperCase().includes('REGULAR')).length;
-            let atencao = dadosContratos.filter(i => (i.Status || "").toUpperCase().includes('ATENÇÃO')).length;
-            let criticos = dadosContratos.filter(i => (i.Status || "").toUpperCase().includes('CRÍTICO')).length;
-
-            document.getElementById('kpi-total').innerText = total;
-            document.getElementById('kpi-regulares').innerText = regulares;
-            document.getElementById('kpi-atencao').innerText = atencao;
-            document.getElementById('kpi-criticos').innerText = criticos;
-
-            // Filtro
-            const filtrados = dadosContratos.filter(item => {
-                const servicoMatch = filtroServico === "" || (item.Serviço || "") === filtroServico;
-                const statusMatch = filtroStatus === "" || (item.Status || "").toUpperCase().includes(filtroStatus);
-                const textoMatch = JSON.stringify(item).toLowerCase().includes(termoBusca);
-                return servicoMatch && statusMatch && textoMatch;
-            });
-
-            const tbody = document.getElementById('tabela-contratos');
-            tbody.innerHTML = '';
-            document.getElementById('contador-contratos').innerText = `${filtrados.length} contrato(s) encontrado(s)`;
-
-            if (filtrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-gray-400">Nenhum contrato encontrado.</td></tr>`;
-                return;
-            }
-
-            filtrados.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50/80 transition-colors";
-
-                const statusStr = item.Status || "REGULAR";
-                const statusNorm = statusStr.toUpperCase();
-
-                let badgeStyle = "bg-emerald-50 text-emerald-700 border border-emerald-200";
-                let dotStyle = "bg-emerald-500";
-
-                if (statusNorm.includes("CRÍTICO")) {
-                    badgeStyle = "bg-red-50 text-red-700 border border-red-200";
-                    dotStyle = "bg-red-500";
-                } else if (statusNorm.includes("ATENÇÃO")) {
-                    badgeStyle = "bg-amber-50 text-amber-700 border border-amber-200";
-                    dotStyle = "bg-amber-500";
-                }
-
-                tr.innerHTML = `
-                    <td class="py-4 px-6 font-semibold text-gray-900">${item.Serviço || "-"}</td>
-                    <td class="py-4 px-6 text-gray-700">${item.Unidade || "-"}</td>
-                    <td class="py-4 px-6 text-gray-900 font-medium">${item.Contrato || "-"}</td>
-                    <td class="py-4 px-6 text-gray-600 text-xs">${item.Origem || "-"}</td>
-                    <td class="py-4 px-6 text-gray-600">${formatarDataBR(item.Vencimento)}</td>
-                    <td class="py-4 px-6 text-center font-bold ${item.Dias < 0 ? 'text-red-600' : 'text-gray-700'}">${item["Dias p/ Vencer"] ?? "--"}</td>
-                    <td class="py-4 px-6">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${badgeStyle}">
-                            <span class="w-1.5 h-1.5 rounded-full ${dotStyle}"></span> ${statusStr}
-                        </span>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        document.getElementById('filtro-servico').addEventListener('change', atualizarPainel);
-        document.getElementById('filtro-status').addEventListener('change', atualizarPainel);
-        document.getElementById('busca-geral').addEventListener('input', atualizarPainel);
-
-        carregarDadosContratos();
-        setInterval(carregarDadosContratos, 300000); // Atualiza a cada 5 minutos
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', carregarContratos);
     </script>
 </body>
 </html>
