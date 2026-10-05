@@ -95,23 +95,40 @@
   </main>
 
   <script>
+    function excelSerialParaData(serial) {
+      if (serial === null || serial === undefined || serial === '') return null;
+
+      const numero = Number(serial);
+      if (isNaN(numero)) return null;
+
+      const utc = Date.UTC(1899, 11, 30) + numero * 86400000;
+      const data = new Date(utc);
+
+      return data;
+    }
+
     function normalizarData(valor) {
       if (!valor) return null;
 
+      if (typeof valor === 'number') {
+        const data = excelSerialParaData(valor);
+        if (data && !isNaN(data.getTime())) {
+          return data.toISOString().split('T')[0];
+        }
+        return null;
+      }
+
       let texto = String(valor).trim();
 
-      // yyyy-mm-dd
       if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
         return texto;
       }
 
-      // dd/mm/yyyy
       if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
         const [dia, mes, ano] = texto.split('/');
         return `${ano}-${mes}-${dia}`;
       }
 
-      // ISO 2025-11-18T00:00:00Z
       if (texto.includes('T')) {
         return texto.split('T')[0];
       }
