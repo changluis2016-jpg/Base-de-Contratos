@@ -2,14 +2,47 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão e Acompanhamento de Contratos</title>
-    <!-- Tus estilos y librerías actuales -->
+    <!-- Se você estiver usando Bootstrap ou outro framework de estilos, mantenha seus links de CSS aqui -->
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+        th { background-color: #f8f9fa; color: #333; font-weight: bold; }
+        .badge-regular { color: #28a745; font-weight: bold; }
+        .badge-critico { color: #dc3545; font-weight: bold; }
+        .badge-atencao { color: #ffc107; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <!-- Tu estructura HTML existente -->
+
+    <div class="container">
+        <h2>Base Consolidada de Contratos</h2>
+        <table id="tabela-contratos">
+            <thead>
+                <tr>
+                    <th>SERVIÇO</th>
+                    <th>UNIDADE</th>
+                    <th>CONTRATO</th>
+                    <th>ORIGEM</th>
+                    <th>VALOR DO CONTRATO</th>
+                    <th>VENCIMENTO</th>
+                    <th>DIAS P/ VENCER</th>
+                    <th>FAIXA</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os dados serão carregados dinamicamente aqui via JavaScript -->
+            </tbody>
+        </table>
+    </div>
 
     <script>
-        // Función para convertir la fecha serial de Excel a formato legible DD/MM/YYYY
+        // Função para converter a data serial do Excel em formato legível DD/MM/AAAA
         function converterDataExcel(serial) {
             if (!serial || isNaN(serial)) return serial;
             const utc_days = Math.floor(serial - 25569);
@@ -23,21 +56,29 @@
             return `${dia}/${mes}/${ano}`;
         }
 
-        // Función para cargar y renderizar los contratos desde tu archivo contratos.json
+        // Função para formatar o valor como Moeda Brasileira (R$)
+        function formatarMoeda(valor) {
+            if (!valor || isNaN(valor)) return 'R$ 0,00';
+            return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Função para carregar e renderizar os contratos do arquivo contratos.json
         async function carregarContratos() {
             try {
-                // Si el JSON está en el mismo repositorio, se carga directamente
                 const resposta = await fetch('contratos.json');
                 const dados = await resposta.json();
 
-                const tbody = document.querySelector('table tbody'); // Asegúrate de que apunta al tbody de tu tabla
+                const tbody = document.querySelector('#tabela-contratos tbody');
                 if (!tbody) return;
                 
                 tbody.innerHTML = '';
 
                 dados.forEach(contrato => {
-                    // Se aplica la conversión en el campo de fecha (ajusta 'Vencimento' según el nombre exacto de la columna en tu Excel)
+                    // Conversão da data de vencimento
                     const dataFormatada = converterDataExcel(contrato.Vencimento);
+                    
+                    // Tratamento do valor do contrato (caso esteja vazio na planilha)
+                    const valorFormatado = contrato['Valor do Contrato'] ? formatarMoeda(contrato['Valor do Contrato']) : 'R$ 0,00';
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -45,8 +86,10 @@
                         <td>${contrato.Unidade || ''}</td>
                         <td>${contrato.Contrato || ''}</td>
                         <td>${contrato.Origem || ''}</td>
+                        <td>${valorFormatado}</td>
                         <td>${dataFormatada}</td>
                         <td>${contrato['Dias p/ Vencer'] || ''}</td>
+                        <td>${contrato.Faixa || ''}</td>
                         <td>${contrato.Status || ''}</td>
                     `;
                     tbody.appendChild(tr);
@@ -56,7 +99,7 @@
             }
         }
 
-        // Ejecutar al cargar la página
+        // Executar ao carregar a página
         document.addEventListener('DOMContentLoaded', carregarContratos);
     </script>
 </body>
