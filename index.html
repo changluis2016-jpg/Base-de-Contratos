@@ -12,40 +12,60 @@
         .badge-regular { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen p-4 md:p-8">
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen p-4 md:p-8">
 
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto space-y-6">
         <!-- Cabeçalho -->
-        <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <header class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Painel de Contratos</h1>
-                <p class="text-sm text-gray-500 mt-1">Sincronizado automaticamente via SharePoint e GitHub</p>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Painel de Contratos</h1>
+                <p class="text-xs font-semibold text-slate-400 mt-1 uppercase tracking-wider">Sincronizado automaticamente via SharePoint e GitHub</p>
             </div>
-            <div class="flex items-center gap-3 w-full md:w-auto">
-                <input type="text" id="searchInput" placeholder="Pesquisar contratos..." 
-                    class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="w-full md:w-80">
+                <input type="text" id="searchInput" placeholder="Pesquisar por unidade, serviço, contrato..." 
+                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
         </header>
 
+        <!-- Cartões de Resumo e Filtros Rápidos -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button onclick="filterByStatus('all')" class="p-4 bg-white rounded-2xl shadow-sm border border-slate-200 text-left hover:border-blue-500 transition-all group">
+                <p class="text-xs font-bold text-slate-400 uppercase">Total de Contratos</p>
+                <p id="countTotal" class="text-2xl font-black text-slate-900 mt-1">0</p>
+            </button>
+            <button onclick="filterByStatus('CRÍTICO')" class="p-4 bg-white rounded-2xl shadow-sm border border-slate-200 text-left hover:border-red-500 transition-all group">
+                <p class="text-xs font-bold text-red-500 uppercase">Críticos</p>
+                <p id="countCritico" class="text-2xl font-black text-red-600 mt-1">0</p>
+            </button>
+            <button onclick="filterByStatus('ATENÇÃO')" class="p-4 bg-white rounded-2xl shadow-sm border border-slate-200 text-left hover:border-amber-500 transition-all group">
+                <p class="text-xs font-bold text-amber-500 uppercase">Em Atenção</p>
+                <p id="countAtencao" class="text-2xl font-black text-amber-600 mt-1">0</p>
+            </button>
+            <button onclick="filterByStatus('REGULAR')" class="p-4 bg-white rounded-2xl shadow-sm border border-slate-200 text-left hover:border-emerald-500 transition-all group">
+                <p class="text-xs font-bold text-emerald-500 uppercase">Regulares</p>
+                <p id="countRegular" class="text-2xl font-black text-emerald-600 mt-1">0</p>
+            </button>
+        </div>
+
         <!-- Tabela -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead>
-                        <tr class="bg-gray-800 text-white uppercase text-xs tracking-wider">
-                            <th class="py-3 px-4 font-semibold">Serviço</th>
-                            <th class="py-3 px-4 font-semibold">Unidade</th>
-                            <th class="py-3 px-4 font-semibold">Contrato</th>
-                            <th class="py-3 px-4 font-semibold">Origem</th>
-                            <th class="py-3 px-4 font-semibold text-right">Valor do Contrato</th>
-                            <th class="py-3 px-4 font-semibold text-center">Vencimento</th>
-                            <th class="py-3 px-4 font-semibold text-center">Dias p/ Vencer</th>
-                            <th class="py-3 px-4 font-semibold text-center">Faixa</th>
-                            <th class="py-3 px-4 font-semibold text-center">Status</th>
+                        <tr class="bg-slate-900 text-white uppercase text-xs tracking-wider">
+                            <th class="py-4 px-5 font-bold">Serviço</th>
+                            <th class="py-4 px-5 font-bold">Unidade</th>
+                            <th class="py-4 px-5 font-bold">Contrato</th>
+                            <th class="py-4 px-5 font-bold">Origem</th>
+                            <th class="py-4 px-5 font-bold text-right">Valor do Contrato</th>
+                            <th class="py-4 px-5 font-bold text-center">Vencimento</th>
+                            <th class="py-4 px-5 font-bold text-center">Dias p/ Vencer</th>
+                            <th class="py-4 px-5 font-bold text-center">Faixa</th>
+                            <th class="py-4 px-5 font-bold text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-gray-200">
-                        <!-- Os dados serão injetados via JavaScript -->
+                    <tbody id="tableBody" class="divide-y divide-slate-100">
+                        <!-- Injetado via JS -->
                     </tbody>
                 </table>
             </div>
@@ -53,7 +73,9 @@
     </div>
 
     <script>
-        // Função para converter o número serial do Excel para data DD/MM/YYYY
+        let allData = [];
+        let currentFilter = 'all';
+
         function excelDateToJSDate(serial) {
             if (!serial || isNaN(serial)) return serial;
             const utc_days = Math.floor(serial - 25569);
@@ -66,75 +88,95 @@
             return `${day}/${month}/${year}`;
         }
 
-        // Função para formatar valores monetários em Reais
         function formatCurrency(value) {
-            if (!value || isNaN(value)) return "-";
+            if (!value || isNaN(value) || value === "") return "-";
             return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        // Função para definir a classe visual baseada no status
         function getStatusBadgeClass(status) {
-            if (!status) return 'bg-gray-100 text-gray-800';
+            if (!status) return 'bg-slate-100 text-slate-800';
             const s = status.toLowerCase();
             if (s.includes('crítico')) return 'badge-critico font-bold';
             if (s.includes('atenção')) return 'badge-atencao font-bold';
             if (s.includes('regular')) return 'badge-regular font-bold';
-            return 'bg-gray-100 text-gray-800';
+            return 'bg-slate-100 text-slate-800';
+        }
+
+        function renderTable(dataToRender) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            if (dataToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400 font-medium">Nenhum contrato encontrado.</td></tr>`;
+                return;
+            }
+
+            dataToRender.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+
+                const vencimentoFormatado = excelDateToJSDate(item["Vencimento"]);
+                const valorFormatado = formatCurrency(item["Valor do Contrato"]);
+                const badgeClass = getStatusBadgeClass(item["Status"]);
+
+                tr.innerHTML = `
+                    <td class="py-4 px-5 text-slate-700">${item["Serviço"] || ''}</td>
+                    <td class="py-4 px-5 font-semibold text-slate-900">${item["Unidade"] || ''}</td>
+                    <td class="py-4 px-5 text-slate-600">${item["Contrato"] || ''}</td>
+                    <td class="py-4 px-5 text-slate-500 text-xs">${item["Origem"] || ''}</td>
+                    <td class="py-4 px-5 text-right font-medium text-slate-700">${valorFormatado}</td>
+                    <td class="py-4 px-5 text-center text-slate-600">${vencimentoFormatado}</td>
+                    <td class="py-4 px-5 text-center font-bold text-slate-800">${item["Dias p/ Vencer"] || ''}</td>
+                    <td class="py-4 px-5 text-center text-xs text-slate-500">${item["Faixa"] || ''}</td>
+                    <td class="py-4 px-5 text-center">
+                        <span class="px-3 py-1 rounded-full text-xs inline-block ${badgeClass}">
+                            ${item["Status"] || ''}
+                        </span>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function updateCounters(data) {
+            document.getElementById('countTotal').innerText = data.length;
+            document.getElementById('countCritico').innerText = data.filter(i => (i["Status"] || '').toUpperCase().includes('CRÍTICO')).length;
+            document.getElementById('countAtencao').innerText = data.filter(i => (i["Status"] || '').toUpperCase().includes('ATENÇÃO')).length;
+            document.getElementById('countRegular').innerText = data.filter(i => (i["Status"] || '').toUpperCase().includes('REGULAR')).length;
+        }
+
+        function filterByStatus(status) {
+            currentFilter = status;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = allData.filter(item => {
+                const matchesStatus = currentFilter === 'all' || (item["Status"] || '').toUpperCase().includes(currentFilter);
+                const matchesSearch = Object.values(item).some(val => String(val).toLowerCase().includes(searchTerm));
+                return matchesStatus && matchesSearch;
+            });
+
+            renderTable(filtered);
         }
 
         async function loadContracts() {
             try {
-                // Busca o arquivo JSON gerado no repositório do GitHub
                 const response = await fetch('contratos.json');
-                if (!response.ok) throw new Error('Erro ao carregar os dados');
+                if (!response.ok) throw new Error('Erro ao carregar');
                 
-                const data = await response.json();
-                const tableBody = document.getElementById('tableBody');
-                tableBody.innerHTML = '';
+                allData = await response.json();
+                updateCounters(allData);
+                renderTable(allData);
 
-                data.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-gray-50 transition-colors';
-
-                    const vencimentoFormatado = excelDateToJSDate(item["Vencimento"]);
-                    const valorFormatado = formatCurrency(item["Valor do Contrato"]);
-                    const badgeClass = getStatusBadgeClass(item["Status"]);
-
-                    tr.innerHTML = `
-                        <td class="py-3 px-4">${item["Serviço"] || ''}</td>
-                        <td class="py-3 px-4 font-medium text-gray-900">${item["Unidade"] || ''}</td>
-                        <td class="py-3 px-4">${item["Contrato"] || ''}</td>
-                        <td class="py-3 px-4 text-gray-500">${item["Origem"] || ''}</td>
-                        <td class="py-3 px-4 text-right">${valorFormatado}</td>
-                        <td class="py-3 px-4 text-center">${vencimentoFormatado}</td>
-                        <td class="py-3 px-4 text-center font-semibold">${item["Dias p/ Vencer"] || ''}</td>
-                        <td class="py-3 px-4 text-center">${item["Faixa"] || ''}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-2.5 py-1 rounded-full text-xs inline-block ${badgeClass}">
-                                ${item["Status"] || ''}
-                            </span>
-                        </td>
-                    `;
-                    tableBody.appendChild(tr);
-                });
-
-                // Funcionalidade de pesquisa em tempo real
-                document.getElementById('searchInput').addEventListener('keyup', function(e) {
-                    const term = e.target.value.toLowerCase();
-                    const rows = tableBody.getElementsByTagName('tr');
-                    
-                    Array.from(rows).forEach(row => {
-                        const text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(term) ? '' : 'none';
-                    });
-                });
+                document.getElementById('searchInput').addEventListener('input', applyFilters);
 
             } catch (error) {
                 console.error('Erro:', error);
                 document.getElementById('tableBody').innerHTML = `
-                    <tr>
-                        <td colspan="9" class="text-center py-6 text-red-500">Erro ao carregar os dados dos contratos. Verifique se o arquivo contratos.json existe no repositório.</td>
-                    </tr>
+                    <tr><td colspan="9" class="text-center py-8 text-red-500 font-medium">Erro ao carregar o arquivo contratos.json. Verifique se ele está no repositório.</td></tr>
                 `;
             }
         }
