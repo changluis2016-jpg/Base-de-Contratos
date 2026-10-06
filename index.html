@@ -3,362 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão e Acompanhamento de Contratos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Base de Contratos - Dashboard</title>
+    <!-- Tailwind CSS para estilização moderna -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #1b3d88;
-            --primary-dark: #122a5c;
-            --bg-color: #f4f7fc;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #6c757d;
-            --border-color: #e2e8f0;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); padding: 20px; }
-
-        .container { max-width: 1400px; margin: 0 auto; }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 25px 30px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-        }
-        .header-left h1 { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
-        .header-left p { font-size: 14px; opacity: 0.85; }
-        .sync-badge {
-            background: rgba(255,255,255,0.15);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .sync-dot { width: 8px; height: 8px; background-color: #28a745; border-radius: 50%; }
-
-        /* Cards de Estatísticas */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-        .stat-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            border: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .stat-info span { display: block; font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 5px; }
-        .stat-info h3 { font-size: 28px; font-weight: 700; color: var(--text-main); }
-        .stat-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .stat-icon.total { background: #eef2ff; color: #4f46e5; }
-        .stat-icon.regular { background: #ecfdf5; color: #10b981; }
-        .stat-icon.atencao { background: #fffbeb; color: #f59e0b; }
-        .stat-icon.critico { background: #fef2f2; color: #ef4444; }
-
-        /* Filtros */
-        .filters-container {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 25px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .filter-input, .filter-select {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            background: #fff;
-        }
-        .filter-input:focus, .filter-select:focus { border-color: var(--primary-color); }
-
-        /* Tabela */
-        .table-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            overflow: hidden;
-        }
-        .table-header-bar {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .table-header-bar h3 { font-size: 16px; font-weight: 600; color: var(--text-main); }
-        .counter-badge { background: #eef2ff; color: #4f46e5; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-
-        .table-responsive { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background: #f8fafc; padding: 12px 16px; font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border-color); }
-        td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--border-color); color: #4b5563; }
-        tr:hover { background: #f8fafc; }
-
-        /* Badges de Status com Cores Corrigidas */
-        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-        .badge.regular { background: #ecfdf5; color: #047857; }
-        .badge.critico { background: #fef2f2; color: #b91c1c; }
-        .badge.atencao { background: #fffbeb; color: #b45309; }
-        
-        .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-        .badge.regular .dot { background-color: #10b981; }
-        .badge.critico .dot { background-color: #ef4444; }
-        .badge.atencao .dot { background-color: #f59e0b; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen text-slate-800">
 
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-left">
-                <h1>Gestão e Acompanhamento de Contratos</h1>
-                <p>Painel de Vigências e Status em Tempo Real</p>
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold flex items-center gap-3">
+                    <i class="fa-solid fa-file-contract text-blue-400"></i> Base de Contratos
+                </h1>
+                <p class="text-slate-400 text-sm mt-1">Painel de Monitoramento e Vigência</p>
             </div>
-            <div class="sync-badge">
-                <div class="sync-dot"></div>
-                Sistema Online
+            <div class="flex items-center gap-3">
+                <button onclick="carregarDados()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow">
+                    <i class="fa-solid fa-rotate"></i> Atualizar Dados
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+
+        <!-- Status Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Total de Contratos</p>
+                    <h3 id="cardTotal" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Críticos / Vencidos</p>
+                    <h3 id="cardCritico" class="text-3xl font-bold text-red-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Em Atenção</p>
+                    <h3 id="cardAtencao" class="text-3xl font-bold text-amber-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Regulares</p>
+                    <h3 id="cardRegular" class="text-3xl font-bold text-emerald-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
             </div>
         </div>
 
-        <!-- Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span>Total de Contratos</span>
-                    <h3 id="count-total">0</h3>
-                </div>
-                <div class="stat-icon total">📋</div>
+        <!-- Filtros e Pesquisa -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="w-full md:w-96 relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="searchInput" oninput="filtrarContratos()" placeholder="Buscar por serviço, unidade, contrato..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span>Contratos Regulares</span>
-                    <h3 id="count-regular">0</h3>
-                </div>
-                <div class="stat-icon regular">✅</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span>Em Atenção</span>
-                    <h3 id="count-atencao">0</h3>
-                </div>
-                <div class="stat-icon atencao">⚠️</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span>Críticos / Vencidos</span>
-                    <h3 id="count-critico">0</h3>
-                </div>
-                <div class="stat-icon critico">❌</div>
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <select id="statusFilter" onchange="filtrarContratos()" class="bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todos os Status</option>
+                    <option value="CRÍTICO">Crítico</option>
+                    <option value="ATENÇÃO">Atenção</option>
+                    <option value="REGULAR">Regular</option>
+                </select>
             </div>
         </div>
 
-        <!-- Filtros -->
-        <div class="filters-container">
-            <select id="filtro-servico" class="filter-select">
-                <option value="">Todos os Serviços</option>
-            </select>
-            <select id="filtro-status" class="filter-select">
-                <option value="">Todos os Status</option>
-                <option value="REGULAR">Regular</option>
-                <option value="ATENÇÃO">Atenção</option>
-                <option value="CRÍTICO">Crítico</option>
-            </select>
-            <input type="text" id="filtro-busca" class="filter-input" placeholder="Pesquisar contrato, fornecedor, categoria...">
-        </div>
-
-        <!-- Tabela -->
-        <div class="table-card">
-            <div class="table-header-bar">
-                <h3>Histórico de Contratos</h3>
-                <span class="counter-badge" id="contador-tabela">0 contrato(s) encontrado(s)</span>
-            </div>
-            <div class="table-responsive">
-                <table id="tabela-contratos">
+        <!-- Tabela de Contratos -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr>
-                            <th>Contrato</th>
-                            <th>Fornecedor</th>
-                            <th>Categoria</th>
-                            <th>Valor</th>
-                            <th>Data Assinatura</th>
-                            <th>Vencimento</th>
-                            <th>Status</th>
-                            <th>Observações</th>
+                        <tr class="bg-slate-100 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
+                            <th class="py-3 px-4">Serviço</th>
+                            <th class="py-3 px-4">Unidade</th>
+                            <th class="py-3 px-4">Contrato</th>
+                            <th class="py-3 px-4">Origem</th>
+                            <th class="py-3 px-4 text-right">Valor do Contrato</th>
+                            <th class="py-3 px-4 text-center">Vencimento</th>
+                            <th class="py-3 px-4 text-center">Dias p/ Vencer</th>
+                            <th class="py-3 px-4 text-center">Faixa</th>
+                            <th class="py-3 px-4 text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tabelaContratos" class="divide-y divide-slate-200 text-sm">
                         <!-- Preenchido via JavaScript -->
                     </tbody>
                 </table>
             </div>
+            <div id="loading" class="text-center py-12 text-slate-500">
+                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-blue-600"></i>
+                <p>Carregando dados dos contratos...</p>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script>
-        let todosContratos = [];
+        let contratosData = [];
 
-        // Função robusta para formatar datas (suporta número serial do Excel e strings YYYY-MM-DD)
-        function formatarData(valorData) {
-            if (!valorData) return '-';
-            
-            // Se for número serial do Excel (ex: 46605)
-            if (!isNaN(valorData) && Number(valorData) > 1000) {
-                const utc_days = Math.floor(Number(valorData) - 25569);
-                const utc_value = utc_days * 86400 * 1000;
-                const data_obj = new Date(utc_value);
-                if (!isNaN(data_obj.getTime())) {
-                    const dia = String(data_obj.getUTCDate()).padStart(2, '0');
-                    const mes = String(data_obj.getUTCMonth() + 1).padStart(2, '0');
-                    const ano = data_obj.getUTCFullYear();
-                    return `${dia}/${mes}/${ano}`;
+        // Função para converter data de diversos formatos (Serial Excel, String ISO, DD/MM/YYYY)
+        function formatarDataExibicao(val) {
+            if (!val) return '-';
+            if (typeof val === 'number') {
+                // Serial do Excel
+                const utc_days = Math.floor(val - 25569);
+                const utc_value = utc_days * 86400;
+                const date_info = new Date(utc_value * 1000);
+                return date_info.toLocaleDateString('pt-BR');
+            }
+            if (typeof val === 'string') {
+                if (val.includes('/')) return val; // Já está DD/MM/YYYY
+                const d = new Date(val);
+                if (!isNaN(d.getTime())) {
+                    return d.toLocaleDateString('pt-BR');
                 }
             }
+            return val;
+        }
 
-            // Se for string no formato ISO ou similar (ex: 2026-12-16 ou com horário)
-            let str = String(valorData).trim();
-            if (str.includes('T')) {
-                str = str.split('T')[0];
+        // Converter para objeto Date para cálculos
+        function parseData(val) {
+            if (!val) return null;
+            if (typeof val === 'number') {
+                const utc_days = Math.floor(val - 25569);
+                return new Date(utc_days * 86400 * 1000);
             }
-            if (str.includes('-') && str.split('-')[0].length === 4) {
-                const partes = str.split('-');
-                if (partes.length === 3) {
-                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            if (typeof val === 'string') {
+                if (val.includes('/')) {
+                    const partes = val.split('/');
+                    return new Date(`${partes[2]}-${partes[1]}-${partes[0]}`);
                 }
+                const d = new Date(val);
+                if (!isNaN(d.getTime())) return d;
             }
-
-            return valorData;
+            return null;
         }
 
-        // Formata o valor numérico em Moeda Brasileira (R$)
-        function formatarMoeda(valor) {
-            if (!valor || isNaN(valor)) return 'R$ 0,00';
-            return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        async function carregarContratos() {
-            try {
-                const resposta = await fetch('contratos.json');
-                todosContratos = await resposta.json();
-
-                preencherFiltroServicos();
-                atualizarPainel(todosContratos);
-            } catch (erro) {
-                console.error('Erro ao carregar os contratos:', erro);
-            }
-        }
-
-        function preencherFiltroServicos() {
-            const selectServico = document.getElementById('filtro-servico');
-            const servicos = [...new Set(todosContratos.map(c => c.Categoria || c.Serviço).filter(Boolean))];
-            
-            selectServico.innerHTML = '<option value="">Todos os Serviços</option>';
-            servicos.sort().forEach(servico => {
-                const option = document.createElement('option');
-                option.value = servico;
-                option.textContent = servico;
-                selectServico.appendChild(option);
-            });
-        }
-
-        function atualizarPainel(dados) {
-            const tbody = document.querySelector('#tabela-contratos tbody');
+        async function carregarDados() {
+            const tbody = document.getElementById('tabelaContratos');
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
             tbody.innerHTML = '';
 
-            let reg = 0, atn = 0, crt = 0;
-
-            dados.forEach(c => {
-                const st = (c.Status || '').toUpperCase().trim();
+            try {
+                const response = await fetch('contratos.json?' + new Date().getTime());
+                if (!response.ok) throw new Error('Erro ao carregar contratos.json');
                 
-                // Contagem precisa para os cards
-                if (st.includes('REGULAR')) reg++;
-                else if (st.includes('ATENÇÃO') || st.includes('ATENCAO')) atn++;
-                else if (st.includes('CRÍTICO') || st.includes('CRITICO') || st.includes('VENCIDO')) crt++;
-
-                const dataAssinaturaFormatada = formatarData(c['Data Assinatura'] || c.DataAssinatura);
-                const vencimentoFormatado = formatarData(c.Vencimento);
-                const valorFormatado = c.Valor ? formatarMoeda(c.Valor) : 'R$ 0,00';
-
-                // Tratamento de classes para as cores do Status
-                let badgeClass = 'regular';
-                let statusTexto = c.Status || 'REGULAR';
+                let json = await response.json();
+                contratosData = Array.isArray(json) ? json : (json.value || []);
                 
-                if (st.includes('CRÍTICO') || st.includes('CRITICO') || st.includes('VENCIDO')) {
-                    badgeClass = 'critico';
-                } else if (st.includes('ATENÇÃO') || st.includes('ATENCAO')) {
-                    badgeClass = 'atencao';
+                renderizarTabela(contratosData);
+                atualizarCards(contratosData);
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-red-500">Erro ao carregar os dados. Verifique se o arquivo contratos.json existe no repositório.</td></tr>`;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function renderizarTabela(dados) {
+            const tbody = document.getElementById('tabelaContratos');
+            tbody.innerHTML = '';
+
+            if (dados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">Nenhum contrato encontrado.</td></tr>`;
+                return;
+            }
+
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
+            dados.forEach(item => {
+                // Mapeamento tolerante a variações de maiúsculas/minúsculas nas colunas do Excel
+                const servico = item.Serviço || item.Servico || '-';
+                const unidade = item.Unidade || '-';
+                const contrato = item.Contrato || '-';
+                const origem = item.Origem || '-';
+                const valorBruto = item['Valor do Contrato'] || item.ValorDoContrato || 0;
+                const dataVencStr = item.Vencimento || item.DataTermino || '';
+                
+                const dataVenc = parseData(dataVencStr);
+                let diasRestantes = '-';
+                let faixa = item.Faixa || '-';
+                let status = item.Status || 'REGULAR';
+
+                if (dataVenc) {
+                    const diffTime = dataVenc - hoje;
+                    diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    // Cálculo automático de Faixa e Status se não vier preenchido
+                    if (diasRestantes < 0) {
+                        faixa = 'Vencido';
+                        status = 'CRÍTICO';
+                    } else if (diasRestantes <= 30) {
+                        faixa = 'Até 30 dias';
+                        status = 'CRÍTICO';
+                    } else if (diasRestantes <= 90) {
+                        faixa = '31 a 90 dias';
+                        status = 'ATENÇÃO';
+                    } else {
+                        faixa = 'Acima de 90 dias';
+                        status = 'REGULAR';
+                    }
+                }
+
+                // Formatar Valor
+                const valorFormatado = Number(valorBruto).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                // Estilização dos Badges de Status
+                let badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                let dotColor = 'bg-emerald-500';
+                
+                const statusUpper = String(status).toUpperCase();
+                if (statusUpper.includes('CRÍ') || statusUpper.includes('CRIT')) {
+                    badgeClass = 'bg-red-100 text-red-800 border-red-300';
+                    dotColor = 'bg-red-500';
+                } else if (statusUpper.includes('ATEN')) {
+                    badgeClass = 'bg-amber-100 text-amber-800 border-amber-300';
+                    dotColor = 'bg-amber-500';
                 }
 
                 const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
                 tr.innerHTML = `
-                    <td><strong>${c.Contrato || ''}</strong></td>
-                    <td>${c.Fornecedor || ''}</td>
-                    <td>${c.Categoria || c.Serviço || ''}</td>
-                    <td>${valorFormatado}</td>
-                    <td>${dataAssinaturaFormatada}</td>
-                    <td>${vencimentoFormatado}</td>
-                    <td><span class="badge ${badgeClass}"><span class="dot"></span>${statusTexto}</span></td>
-                    <td>${c.Observações || c.Observacoes || ''}</td>
+                    <td class="py-3 px-4 font-medium text-slate-900">${servico}</td>
+                    <td class="py-3 px-4 text-slate-600">${unidade}</td>
+                    <td class="py-3 px-4 text-slate-600">${contrato}</td>
+                    <td class="py-3 px-4 text-slate-500 text-xs">${origem}</td>
+                    <td class="py-3 px-4 text-right font-medium text-slate-900">${valorBruto ? valorFormatado : '-'}</td>
+                    <td class="py-3 px-4 text-center text-slate-600">${formatarDataExibicao(dataVencStr)}</td>
+                    <td class="py-3 px-4 text-center font-semibold ${diasRestantes < 0 ? 'text-red-600' : 'text-slate-700'}">${diasRestantes}</td>
+                    <td class="py-3 px-4 text-center text-xs text-slate-500">${faixa}</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${badgeClass}">
+                            <span class="w-2 h-2 rounded-full ${dotColor}"></span>
+                            ${statusUpper}
+                        </span>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            // Atualiza contadores
-            document.getElementById('count-total').textContent = todosContratos.length;
-            document.getElementById('count-regular').textContent = reg;
-            document.getElementById('count-atencao').textContent = atn;
-            document.getElementById('count-critico').textContent = crt;
-            document.getElementById('contador-tabela').textContent = `${dados.length} contrato(s) encontrado(s)`;
         }
 
-        function aplicarFiltros() {
-            const servicoFiltro = document.getElementById('filtro-servico').value;
-            const statusFiltro = document.getElementById('filtro-status').value.toUpperCase();
-            const buscaFiltro = document.getElementById('filtro-busca').value.toLowerCase();
+        function atualizarCards(dados) {
+            let total = dados.length;
+            let criticos = 0;
+            let atencao = 0;
+            let regulares = 0;
 
-            const filtrados = todosContratos.filter(c => {
-                const catServ = c.Categoria || c.Serviço || '';
-                const matchServico = !servicoFiltro || catServ === servicoFiltro;
-                const matchStatus = !statusFiltro || (c.Status || '').toUpperCase().includes(statusFiltro);
-                
-                const textoGeral = `${c.Contrato || ''} ${c.Fornecedor || ''} ${catServ} ${c.Observações || ''}`.toLowerCase();
-                const matchBusca = !buscaFiltro || textoGeral.includes(buscaFiltro);
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
 
-                return matchServico && matchStatus && matchBusca;
+            dados.forEach(item => {
+                const dataVencStr = item.Vencimento || item.DataTermino || '';
+                const dataVenc = parseData(dataVencStr);
+                let status = (item.Status || '').toUpperCase();
+
+                if (dataVenc) {
+                    const diffTime = dataVenc - hoje;
+                    const dias = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    if (dias <= 30) criticos++;
+                    else if (dias <= 90) atencao++;
+                    else regulares++;
+                } else if (status.includes('CRÍ') || status.includes('CRIT')) {
+                    criticos++;
+                } else if (status.includes('ATEN')) {
+                    atencao++;
+                } else {
+                    regulares++;
+                }
             });
 
-            atualizarPainel(filtrados);
+            document.getElementById('cardTotal').innerText = total;
+            document.getElementById('cardCritico').innerText = criticos;
+            document.getElementById('cardAtencao').innerText = atencao;
+            document.getElementById('cardRegular').innerText = regulares;
         }
 
-        document.getElementById('filtro-servico').addEventListener('change', aplicarFiltros);
-        document.getElementById('filtro-status').addEventListener('change', aplicarFiltros);
-        document.getElementById('filtro-busca').addEventListener('input', aplicarFiltros);
+        function filtrarContratos() {
+            const termo = document.getElementById('searchInput').value.toLowerCase();
+            const statusSel = document.getElementById('statusFilter').value.toUpperCase();
 
-        document.addEventListener('DOMContentLoaded', carregarContratos);
+            const filtrados = contratosData.filter(item => {
+                const servico = String(item.Serviço || item.Servico || '').toLowerCase();
+                const unidade = String(item.Unidade || '').toLowerCase();
+                const contrato = String(item.Contrato || '').toLowerCase();
+                const origem = String(item.Origem || '').toLowerCase();
+
+                const matchTexto = servico.includes(termo) || unidade.includes(termo) || contrato.includes(termo) || origem.includes(termo);
+                
+                let status = String(item.Status || '').toUpperCase();
+                if (!item.Status && item.Vencimento) {
+                    const hoje = new Date();
+                    hoje.setHours(0, 0, 0, 0);
+                    const dias = Math.ceil((parseData(item.Vencimento) - hoje) / (1000 * 60 * 60 * 24));
+                    status = dias <= 30 ? 'CRÍTICO' : (dias <= 90 ? 'ATENÇÃO' : 'REGULAR');
+                }
+
+                const matchStatus = !statusSel || status.includes(statusSel);
+
+                return matchTexto && matchStatus;
+            });
+
+            renderizarTabela(filtrados);
+        }
+
+        // Carregar ao iniciar a página
+        window.onload = carregarDados;
     </script>
 </body>
 </html>
