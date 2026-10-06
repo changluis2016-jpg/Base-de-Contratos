@@ -3,337 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base de Contratos - Dashboard</title>
-    <!-- Tailwind CSS para estilização moderna -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome para ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Base de Contratos</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .badge-critico { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .badge-atencao { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .badge-regular { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800">
+<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen p-4 md:p-8">
 
-    <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Cabeçalho -->
+        <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div>
-                <h1 class="text-2xl font-bold flex items-center gap-3">
-                    <i class="fa-solid fa-file-contract text-blue-400"></i> Base de Contratos
-                </h1>
-                <p class="text-slate-400 text-sm mt-1">Painel de Monitoramento e Vigência</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="carregarDados()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow">
-                    <i class="fa-solid fa-rotate"></i> Atualizar Dados
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
-
-        <!-- Status Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Total de Contratos</p>
-                    <h3 id="cardTotal" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-folder-open"></i>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Críticos / Vencidos</p>
-                    <h3 id="cardCritico" class="text-3xl font-bold text-red-600 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Em Atenção</p>
-                    <h3 id="cardAtencao" class="text-3xl font-bold text-amber-600 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-clock"></i>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Regulares</p>
-                    <h3 id="cardRegular" class="text-3xl font-bold text-emerald-600 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filtros e Pesquisa -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div class="w-full md:w-96 relative">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" id="searchInput" oninput="filtrarContratos()" placeholder="Buscar por serviço, unidade, contrato..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <h1 class="text-2xl font-bold text-gray-900">Painel de Contratos</h1>
+                <p class="text-sm text-gray-500 mt-1">Sincronizado automaticamente via SharePoint e GitHub</p>
             </div>
             <div class="flex items-center gap-3 w-full md:w-auto">
-                <select id="statusFilter" onchange="filtrarContratos()" class="bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Todos os Status</option>
-                    <option value="CRÍTICO">Crítico</option>
-                    <option value="ATENÇÃO">Atenção</option>
-                    <option value="REGULAR">Regular</option>
-                </select>
+                <input type="text" id="searchInput" placeholder="Pesquisar contratos..." 
+                    class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
-        </div>
+        </header>
 
-        <!-- Tabela de Contratos -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <!-- Tabela -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse text-sm">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
-                            <th class="py-3 px-4">Serviço</th>
-                            <th class="py-3 px-4">Unidade</th>
-                            <th class="py-3 px-4">Contrato</th>
-                            <th class="py-3 px-4">Origem</th>
-                            <th class="py-3 px-4 text-right">Valor do Contrato</th>
-                            <th class="py-3 px-4 text-center">Vencimento</th>
-                            <th class="py-3 px-4 text-center">Dias p/ Vencer</th>
-                            <th class="py-3 px-4 text-center">Faixa</th>
-                            <th class="py-3 px-4 text-center">Status</th>
+                        <tr class="bg-gray-800 text-white uppercase text-xs tracking-wider">
+                            <th class="py-3 px-4 font-semibold">Serviço</th>
+                            <th class="py-3 px-4 font-semibold">Unidade</th>
+                            <th class="py-3 px-4 font-semibold">Contrato</th>
+                            <th class="py-3 px-4 font-semibold">Origem</th>
+                            <th class="py-3 px-4 font-semibold text-right">Valor do Contrato</th>
+                            <th class="py-3 px-4 font-semibold text-center">Vencimento</th>
+                            <th class="py-3 px-4 font-semibold text-center">Dias p/ Vencer</th>
+                            <th class="py-3 px-4 font-semibold text-center">Faixa</th>
+                            <th class="py-3 px-4 font-semibold text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelaContratos" class="divide-y divide-slate-200 text-sm">
-                        <!-- Preenchido via JavaScript -->
+                    <tbody id="tableBody" class="divide-y divide-gray-200">
+                        <!-- Os dados serão injetados via JavaScript -->
                     </tbody>
                 </table>
             </div>
-            <div id="loading" class="text-center py-12 text-slate-500">
-                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-blue-600"></i>
-                <p>Carregando dados dos contratos...</p>
-            </div>
         </div>
-    </main>
+    </div>
 
     <script>
-        let contratosData = [];
-
-        // Função para converter data de diversos formatos (Serial Excel, String ISO, DD/MM/YYYY)
-        function formatarDataExibicao(val) {
-            if (!val) return '-';
-            if (typeof val === 'number') {
-                // Serial do Excel
-                const utc_days = Math.floor(val - 25569);
-                const utc_value = utc_days * 86400;
-                const date_info = new Date(utc_value * 1000);
-                return date_info.toLocaleDateString('pt-BR');
-            }
-            if (typeof val === 'string') {
-                if (val.includes('/')) return val; // Já está DD/MM/YYYY
-                const d = new Date(val);
-                if (!isNaN(d.getTime())) {
-                    return d.toLocaleDateString('pt-BR');
-                }
-            }
-            return val;
+        // Função para converter o número serial do Excel para data DD/MM/YYYY
+        function excelDateToJSDate(serial) {
+            if (!serial || isNaN(serial)) return serial;
+            const utc_days = Math.floor(serial - 25569);
+            const utc_value = utc_days * 86400;
+            const date_info = new Date(utc_value * 1000);
+            
+            const day = String(date_info.getUTCDate()).padStart(2, '0');
+            const month = String(date_info.getUTCMonth() + 1).padStart(2, '0');
+            const year = date_info.getUTCFullYear();
+            return `${day}/${month}/${year}`;
         }
 
-        // Converter para objeto Date para cálculos
-        function parseData(val) {
-            if (!val) return null;
-            if (typeof val === 'number') {
-                const utc_days = Math.floor(val - 25569);
-                return new Date(utc_days * 86400 * 1000);
-            }
-            if (typeof val === 'string') {
-                if (val.includes('/')) {
-                    const partes = val.split('/');
-                    return new Date(`${partes[2]}-${partes[1]}-${partes[0]}`);
-                }
-                const d = new Date(val);
-                if (!isNaN(d.getTime())) return d;
-            }
-            return null;
+        // Função para formatar valores monetários em Reais
+        function formatCurrency(value) {
+            if (!value || isNaN(value)) return "-";
+            return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        async function carregarDados() {
-            const tbody = document.getElementById('tabelaContratos');
-            const loading = document.getElementById('loading');
-            loading.style.display = 'block';
-            tbody.innerHTML = '';
+        // Função para definir a classe visual baseada no status
+        function getStatusBadgeClass(status) {
+            if (!status) return 'bg-gray-100 text-gray-800';
+            const s = status.toLowerCase();
+            if (s.includes('crítico')) return 'badge-critico font-bold';
+            if (s.includes('atenção')) return 'badge-atencao font-bold';
+            if (s.includes('regular')) return 'badge-regular font-bold';
+            return 'bg-gray-100 text-gray-800';
+        }
 
+        async function loadContracts() {
             try {
-                const response = await fetch('contratos.json?' + new Date().getTime());
-                if (!response.ok) throw new Error('Erro ao carregar contratos.json');
+                // Busca o arquivo JSON gerado no repositório do GitHub
+                const response = await fetch('contratos.json');
+                if (!response.ok) throw new Error('Erro ao carregar os dados');
                 
-                let json = await response.json();
-                contratosData = Array.isArray(json) ? json : (json.value || []);
-                
-                renderizarTabela(contratosData);
-                atualizarCards(contratosData);
-            } catch (error) {
-                console.error(error);
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-red-500">Erro ao carregar os dados. Verifique se o arquivo contratos.json existe no repositório.</td></tr>`;
-            } finally {
-                loading.style.display = 'none';
-            }
-        }
+                const data = await response.json();
+                const tableBody = document.getElementById('tableBody');
+                tableBody.innerHTML = '';
 
-        function renderizarTabela(dados) {
-            const tbody = document.getElementById('tabelaContratos');
-            tbody.innerHTML = '';
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-50 transition-colors';
 
-            if (dados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">Nenhum contrato encontrado.</td></tr>`;
-                return;
-            }
+                    const vencimentoFormatado = excelDateToJSDate(item["Vencimento"]);
+                    const valorFormatado = formatCurrency(item["Valor do Contrato"]);
+                    const badgeClass = getStatusBadgeClass(item["Status"]);
 
-            const hoje = new Date();
-            hoje.setHours(0, 0, 0, 0);
+                    tr.innerHTML = `
+                        <td class="py-3 px-4">${item["Serviço"] || ''}</td>
+                        <td class="py-3 px-4 font-medium text-gray-900">${item["Unidade"] || ''}</td>
+                        <td class="py-3 px-4">${item["Contrato"] || ''}</td>
+                        <td class="py-3 px-4 text-gray-500">${item["Origem"] || ''}</td>
+                        <td class="py-3 px-4 text-right">${valorFormatado}</td>
+                        <td class="py-3 px-4 text-center">${vencimentoFormatado}</td>
+                        <td class="py-3 px-4 text-center font-semibold">${item["Dias p/ Vencer"] || ''}</td>
+                        <td class="py-3 px-4 text-center">${item["Faixa"] || ''}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-xs inline-block ${badgeClass}">
+                                ${item["Status"] || ''}
+                            </span>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
 
-            dados.forEach(item => {
-                // Mapeamento tolerante a variações de maiúsculas/minúsculas nas colunas do Excel
-                const servico = item.Serviço || item.Servico || '-';
-                const unidade = item.Unidade || '-';
-                const contrato = item.Contrato || '-';
-                const origem = item.Origem || '-';
-                const valorBruto = item['Valor do Contrato'] || item.ValorDoContrato || 0;
-                const dataVencStr = item.Vencimento || item.DataTermino || '';
-                
-                const dataVenc = parseData(dataVencStr);
-                let diasRestantes = '-';
-                let faixa = item.Faixa || '-';
-                let status = item.Status || 'REGULAR';
-
-                if (dataVenc) {
-                    const diffTime = dataVenc - hoje;
-                    diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                // Funcionalidade de pesquisa em tempo real
+                document.getElementById('searchInput').addEventListener('keyup', function(e) {
+                    const term = e.target.value.toLowerCase();
+                    const rows = tableBody.getElementsByTagName('tr');
                     
-                    // Cálculo automático de Faixa e Status se não vier preenchido
-                    if (diasRestantes < 0) {
-                        faixa = 'Vencido';
-                        status = 'CRÍTICO';
-                    } else if (diasRestantes <= 30) {
-                        faixa = 'Até 30 dias';
-                        status = 'CRÍTICO';
-                    } else if (diasRestantes <= 90) {
-                        faixa = '31 a 90 dias';
-                        status = 'ATENÇÃO';
-                    } else {
-                        faixa = 'Acima de 90 dias';
-                        status = 'REGULAR';
-                    }
-                }
+                    Array.from(rows).forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(term) ? '' : 'none';
+                    });
+                });
 
-                // Formatar Valor
-                const valorFormatado = Number(valorBruto).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-                // Estilização dos Badges de Status
-                let badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-                let dotColor = 'bg-emerald-500';
-                
-                const statusUpper = String(status).toUpperCase();
-                if (statusUpper.includes('CRÍ') || statusUpper.includes('CRIT')) {
-                    badgeClass = 'bg-red-100 text-red-800 border-red-300';
-                    dotColor = 'bg-red-500';
-                } else if (statusUpper.includes('ATEN')) {
-                    badgeClass = 'bg-amber-100 text-amber-800 border-amber-300';
-                    dotColor = 'bg-amber-500';
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
-                tr.innerHTML = `
-                    <td class="py-3 px-4 font-medium text-slate-900">${servico}</td>
-                    <td class="py-3 px-4 text-slate-600">${unidade}</td>
-                    <td class="py-3 px-4 text-slate-600">${contrato}</td>
-                    <td class="py-3 px-4 text-slate-500 text-xs">${origem}</td>
-                    <td class="py-3 px-4 text-right font-medium text-slate-900">${valorBruto ? valorFormatado : '-'}</td>
-                    <td class="py-3 px-4 text-center text-slate-600">${formatarDataExibicao(dataVencStr)}</td>
-                    <td class="py-3 px-4 text-center font-semibold ${diasRestantes < 0 ? 'text-red-600' : 'text-slate-700'}">${diasRestantes}</td>
-                    <td class="py-3 px-4 text-center text-xs text-slate-500">${faixa}</td>
-                    <td class="py-3 px-4 text-center">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${badgeClass}">
-                            <span class="w-2 h-2 rounded-full ${dotColor}"></span>
-                            ${statusUpper}
-                        </span>
-                    </td>
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('tableBody').innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center py-6 text-red-500">Erro ao carregar os dados dos contratos. Verifique se o arquivo contratos.json existe no repositório.</td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
-            });
+            }
         }
 
-        function atualizarCards(dados) {
-            let total = dados.length;
-            let criticos = 0;
-            let atencao = 0;
-            let regulares = 0;
-
-            const hoje = new Date();
-            hoje.setHours(0, 0, 0, 0);
-
-            dados.forEach(item => {
-                const dataVencStr = item.Vencimento || item.DataTermino || '';
-                const dataVenc = parseData(dataVencStr);
-                let status = (item.Status || '').toUpperCase();
-
-                if (dataVenc) {
-                    const diffTime = dataVenc - hoje;
-                    const dias = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    if (dias <= 30) criticos++;
-                    else if (dias <= 90) atencao++;
-                    else regulares++;
-                } else if (status.includes('CRÍ') || status.includes('CRIT')) {
-                    criticos++;
-                } else if (status.includes('ATEN')) {
-                    atencao++;
-                } else {
-                    regulares++;
-                }
-            });
-
-            document.getElementById('cardTotal').innerText = total;
-            document.getElementById('cardCritico').innerText = criticos;
-            document.getElementById('cardAtencao').innerText = atencao;
-            document.getElementById('cardRegular').innerText = regulares;
-        }
-
-        function filtrarContratos() {
-            const termo = document.getElementById('searchInput').value.toLowerCase();
-            const statusSel = document.getElementById('statusFilter').value.toUpperCase();
-
-            const filtrados = contratosData.filter(item => {
-                const servico = String(item.Serviço || item.Servico || '').toLowerCase();
-                const unidade = String(item.Unidade || '').toLowerCase();
-                const contrato = String(item.Contrato || '').toLowerCase();
-                const origem = String(item.Origem || '').toLowerCase();
-
-                const matchTexto = servico.includes(termo) || unidade.includes(termo) || contrato.includes(termo) || origem.includes(termo);
-                
-                let status = String(item.Status || '').toUpperCase();
-                if (!item.Status && item.Vencimento) {
-                    const hoje = new Date();
-                    hoje.setHours(0, 0, 0, 0);
-                    const dias = Math.ceil((parseData(item.Vencimento) - hoje) / (1000 * 60 * 60 * 24));
-                    status = dias <= 30 ? 'CRÍTICO' : (dias <= 90 ? 'ATENÇÃO' : 'REGULAR');
-                }
-
-                const matchStatus = !statusSel || status.includes(statusSel);
-
-                return matchTexto && matchStatus;
-            });
-
-            renderizarTabela(filtrados);
-        }
-
-        // Carregar ao iniciar a página
-        window.onload = carregarDados;
+        loadContracts();
     </script>
 </body>
 </html>
